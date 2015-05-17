@@ -232,4 +232,44 @@ el_ed <- election_education[keep_el_ed]
 # write out the election_education file
 write.xlsx(el_ed, file = "election_education.xlsx", colNames = T)
 
-# test change
+
+# something is wrong with the election_education.xlsx file
+# not all the cases have come through
+# check merge names - which constituency var has caused difficulties?
+# having scanned through, looks like it's the gcsemerge and electionmerge stage where it's gone wrong
+# Need to correct the constituency merge variable
+
+names(gcsemerge)
+names(election)
+names(election_education) # checking the excel file, there are no Dorset constituencies listed, something is wrong with the match
+# this is strange, as the write-out file below shows that there ARE Dorset constituencies in the election df.
+
+# write out the files to take a look
+write.xlsx(gcsemerge, file = "gcsemerge_temp.xlsx", colNames = T)
+write.xlsx(election, file = "election_temp.xlsx", colNames = T)
+
+# check the levels of the constituency variable in each df
+levels(election$constituency) # 194 is Dorset Mid and Poole North
+levels(gcsemerge$constituency)
+class(gcsemerge$constituency)
+str(gcsemerge$constituency) # turns out constituency isn't a var in there
+
+levels(gcsemerge$cons)
+str(gcsemerge$cons) #annoying, it's a character var
+table(gcsemerge$cons) #ok so here it's Mid Dorset and North Poole, which is what we need for the shapefile. So the gcsemerge df is ok, it's the election one
+
+names(election)
+# ok, looks like I should merge gcsemerge$cons with election$constituency_renamed
+
+
+# merge election and gcsemerge datasets v2 -----------------------------------
+
+gcsemerge$constituency_renamed <- gcsemerge$cons #get a same name var to merge
+election_education <- merge(election, gcsemerge, by = "constituency_renamed") #let's merge on the renamed var instead
+table(election_education$constituency_renamed)
+election_education <- election_education[order(election_education$constituency, election_education$position), ]
+names(election_education)
+
+
+# write out the election_education file
+write.xlsx(election_education, file = "election_education_v2.xlsx", colNames = T) # no, something is still wrong e.g. the Cotswolds isn't merging properly...need to sort this!
