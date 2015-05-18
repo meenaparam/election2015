@@ -154,6 +154,13 @@ ld_gcse <- merge(ld, gcsemerge, by = "cons")
 names(ukip_gcse)
 g1_ukip_acem <- ggplot(ukip_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "purple", alpha = 0.1, fill = "purple") + labs (x = "average 5A*C inc E&M 2011-2014", y = "UKIP vote share 2015")
 g1_ukip_acem
+cor(ukip_gcse$acem_avg, ukip_gcse$share)
+cor.test(ukip_gcse$acem_avg, ukip_gcse$share)
+library(psych)
+describe(ukip_gcse$acem_avg)
+describe(ukip_gcse$share)
+
+
 g2_ukip_eeb <- ggplot(ukip_gcse, aes(eeb_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "purple", alpha = 0.1, fill = "purple") + labs (x = "average % of pupils entered for EBacc 2011-2014", y = "UKIP vote share 2015")
 g2_ukip_eeb
 g3_ukip_aeb <- ggplot(ukip_gcse, aes(aeb_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "purple", alpha = 0.1, fill = "purple") + labs (x = "average % of pupils achieving EBacc 2011-2014", y = "UKIP vote share 2015")
@@ -172,6 +179,12 @@ g3_lab_aeb
 names(con_gcse)
 g1_con_acem <- ggplot(con_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "blue", alpha = 0.1, fill = "blue") + labs (x = "average 5A*C inc E&M 2011-2014", y = "Conservative vote share 2015")
 g1_con_acem
+
+cor(con_gcse$acem_avg, con_gcse$share)
+cor.test(con_gcse$acem_avg, con_gcse$share)
+describe(con_gcse$acem_avg)
+describe(con_gcse$share)
+
 g2_con_eeb <- ggplot(con_gcse, aes(eeb_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "blue", alpha = 0.1, fill = "blue") + labs (x = "average % of pupils entered for EBacc 2011-2014", y = "Conservative vote share 2015")
 g2_con_eeb
 g3_con_aeb <- ggplot(con_gcse, aes(aeb_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "blue", alpha = 0.1, fill = "blue") + labs (x = "average % of pupils achieving EBacc 2011-2014", y = "Conservative vote share 2015")

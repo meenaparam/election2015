@@ -49,6 +49,11 @@ Source: CRAN
 Version: 1.5
 Hash: 38d492cf072bc9f3c73bda2aee3d0e23
 
+Package: mnormt
+Source: CRAN
+Version: 1.5-2
+Hash: 483c576a9691823320064b1123ae3159
+
 Package: munsell
 Source: CRAN
 Version: 0.4.2
@@ -85,6 +90,12 @@ Package: proto
 Source: CRAN
 Version: 0.3-10
 Hash: 668a9e87cedbdc5f56c396edf1bd2648
+
+Package: psych
+Source: CRAN
+Version: 1.5.4
+Hash: bde5ae791462ac7acee80c3e9b215b91
+Requires: mnormt
 
 Package: reshape
 Source: CRAN
