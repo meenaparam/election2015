@@ -1,5 +1,5 @@
 ### Exploring relationships between political participation and educational outcomes ###
-### MP 15/05/15 ###
+### MP 19/05/15 ###
 
 setwd("~/GitHub/election2015")
 
@@ -7,10 +7,14 @@ library(openxlsx)
 library(reshape)
 library(pastecs)
 library(ggplot2)
+library(dplyr)
 
 
 # setting up election datasets --------------------------------------------
 
+# this analysis has been updated to try and correct some merging problems between the turnout and votes datasets
+
+# before correcting, there were 3887 cases in "election" - now there are 3971
 
 # make a turnout dataframe
 turnout <- read.xlsx(xlsxFile = "turnout2015_clean.xlsx", sheet = 1, startRow = 1, skipEmptyRows = TRUE)
@@ -152,11 +156,12 @@ ld_gcse <- merge(ld, gcsemerge, by = "cons")
 
 #ukip
 names(ukip_gcse)
-g1_ukip_acem <- ggplot(ukip_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "purple", alpha = 0.1, fill = "purple") + labs (x = "average 5A*C inc E&M 2011-2014", y = "UKIP vote share 2015")
+g1_ukip_acem <- ggplot(ukip_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "purple", alpha = 0.1, fill = "purple") + labs (x = "Average 5A*C inc E&M 2011-2014", y = "UKIP vote share 2015") + ggtitle ("Relationship between constituency average GCSE performance \n and UKIP vote share")
 g1_ukip_acem
+
 cor(ukip_gcse$acem_avg, ukip_gcse$share)
 cor.test(ukip_gcse$acem_avg, ukip_gcse$share)
-library(psych)
+# library(psych) # masked as it stops ggplot working
 describe(ukip_gcse$acem_avg)
 describe(ukip_gcse$share)
 
@@ -170,6 +175,30 @@ g3_ukip_aeb
 names(lab_gcse)
 g1_lab_acem <- ggplot(lab_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "red", alpha = 0.1, fill = "red") + labs (x = "average 5A*C inc E&M 2011-2014", y = "Labour vote share 2015")
 g1_lab_acem
+
+require(psych)
+describe(lab_gcse$acem_avg)
+describe(lab_gcse$share)
+
+# fixing missing constituencies -------------------------------------------
+
+# seems like there is still one constituency missing here between ukip_gcse and lab_gcse - in the latter, n = 532
+
+ukip_constit <- (ukip_gcse$cons)
+lab_constit <- (lab_gcse$cons)
+
+missing <- ukip_constit %in% lab_constit
+missing[missing == FALSE] # one is missing - eyeballing it I can see it's number 79 in the list
+ukip_constit[79] # Buckingham
+lab_constit[79]
+
+# after looking through some of the dfs, it seems that only Greens and UKIP put forward a candidate in Buckingham, because it's where the speaker John Bercow runs. So there'll be 533 constituencies in the UKIP df, but 532 in the others
+
+
+# returning to graphing ---------------------------------------------------
+
+
+require(ggplot2)
 g2_lab_eeb <- ggplot(lab_gcse, aes(eeb_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "red", alpha = 0.1, fill = "red") + labs (x = "average % of pupils entered for EBacc 2011-2014", y = "Labour vote share 2015")
 g2_lab_eeb
 g3_lab_aeb <- ggplot(lab_gcse, aes(aeb_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "red", alpha = 0.1, fill = "red") + labs (x = "average % of pupils achieving EBacc 2011-2014", y = "Labour vote share 2015")
@@ -177,13 +206,15 @@ g3_lab_aeb
 
 #tory
 names(con_gcse)
-g1_con_acem <- ggplot(con_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "blue", alpha = 0.1, fill = "blue") + labs (x = "average 5A*C inc E&M 2011-2014", y = "Conservative vote share 2015")
+g1_con_acem <- ggplot(con_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "blue", alpha = 0.1, fill = "blue") + labs (x = "Average 5A*C inc E&M 2011-2014", y = "Conservative vote share 2015") + ggtitle ("Relationship between constituency average GCSE performance \n and Conservative vote share")
 g1_con_acem
 
 cor(con_gcse$acem_avg, con_gcse$share)
 cor.test(con_gcse$acem_avg, con_gcse$share)
+library(psych)
 describe(con_gcse$acem_avg)
 describe(con_gcse$share)
+library(ggplot2)
 
 g2_con_eeb <- ggplot(con_gcse, aes(eeb_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "blue", alpha = 0.1, fill = "blue") + labs (x = "average % of pupils entered for EBacc 2011-2014", y = "Conservative vote share 2015")
 g2_con_eeb
