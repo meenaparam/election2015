@@ -1,5 +1,7 @@
 ### Exploring relationships between political participation and educational outcomes ###
-### MP 19/05/15 ###
+### MP 20/05/15 ###
+### Now a fully merged working df + written out excel file ###
+
 
 setwd("~/GitHub/election2015")
 
@@ -20,7 +22,7 @@ library(dplyr)
 turnout <- read.xlsx(xlsxFile = "turnout2015_clean.xlsx", sheet = 1, startRow = 1, skipEmptyRows = TRUE)
 
 votes <- read.csv("~/GitHub/election2015/votes2015.csv")
-view(votes)
+View(votes)
 
 table(votes$position) # look at distribution of positions
 class(votes$position)
@@ -156,7 +158,8 @@ ld_gcse <- merge(ld, gcsemerge, by = "cons")
 
 #ukip
 names(ukip_gcse)
-g1_ukip_acem <- ggplot(ukip_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "purple", alpha = 0.1, fill = "purple") + labs (x = "Average 5A*C inc E&M 2011-2014", y = "UKIP vote share 2015") + ggtitle ("Relationship between constituency average GCSE performance \n and UKIP vote share")
+g1_ukip_acem <- ggplot(ukip_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "purple", alpha = 0.1, fill = "purple") + labs (x = "Average 5A*C inc E&M 2011-2014", y = "UKIP vote share 2015") 
+# + ggtitle ("Relationship between constituency average GCSE performance \n and UKIP vote share") +  theme(plot.title = element_text(size = 12))
 g1_ukip_acem
 
 cor(ukip_gcse$acem_avg, ukip_gcse$share)
@@ -165,6 +168,8 @@ cor.test(ukip_gcse$acem_avg, ukip_gcse$share)
 describe(ukip_gcse$acem_avg)
 describe(ukip_gcse$share)
 
+m1 <- lm(ukip_gcse$share ~ ukip_gcse$acem_avg)
+summary(m1)
 
 g2_ukip_eeb <- ggplot(ukip_gcse, aes(eeb_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "purple", alpha = 0.1, fill = "purple") + labs (x = "average % of pupils entered for EBacc 2011-2014", y = "UKIP vote share 2015")
 g2_ukip_eeb
@@ -208,6 +213,9 @@ g3_lab_aeb
 names(con_gcse)
 g1_con_acem <- ggplot(con_gcse, aes(acem_avg, share)) + geom_point() + geom_smooth(method = "lm", colour = "blue", alpha = 0.1, fill = "blue") + labs (x = "Average 5A*C inc E&M 2011-2014", y = "Conservative vote share 2015") + ggtitle ("Relationship between constituency average GCSE performance \n and Conservative vote share")
 g1_con_acem
+
+m2 <- lm(con_gcse$share ~ con_gcse$acem_avg)
+summary(m2)
 
 cor(con_gcse$acem_avg, con_gcse$share)
 cor.test(con_gcse$acem_avg, con_gcse$share)
@@ -311,9 +319,9 @@ names(election)
 gcsemerge$constituency_renamed <- gcsemerge$cons #get a same name var to merge
 election_education <- merge(election, gcsemerge, by = "constituency_renamed") #let's merge on the renamed var instead
 table(election_education$constituency_renamed)
-election_education <- election_education[order(election_education$constituency, election_education$position), ]
+election_education <- election_education[order(election_education$constituency_renamed, election_education$position), ]
 names(election_education)
 
 
 # write out the election_education file
-write.xlsx(election_education, file = "election_education_v2.xlsx", colNames = T) # no, something is still wrong e.g. the Cotswolds isn't merging properly...need to sort this!
+write.xlsx(election_education, file = "election_education_v3.xlsx", colNames = T) # cotswolds issues fixed
