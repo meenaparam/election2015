@@ -282,7 +282,7 @@ keep_el_ed <- names(election_education)[c(1:12, 14:15, 17:20, 23:30, 32:39, 41:6
 el_ed <- election_education[keep_el_ed]
 
 # write out the election_education file
-write.xlsx(el_ed, file = "election_education.xlsx", colNames = T)
+# write.xlsx(el_ed, file = "election_education.xlsx", colNames = T)
 
 
 # something is wrong with the election_education.xlsx file
@@ -296,9 +296,9 @@ names(election)
 names(election_education) # checking the excel file, there are no Dorset constituencies listed, something is wrong with the match
 # this is strange, as the write-out file below shows that there ARE Dorset constituencies in the election df.
 
-# write out the files to take a look
-write.xlsx(gcsemerge, file = "gcsemerge_temp.xlsx", colNames = T)
-write.xlsx(election, file = "election_temp.xlsx", colNames = T)
+# # write out the files to take a look
+# write.xlsx(gcsemerge, file = "gcsemerge_temp.xlsx", colNames = T)
+# write.xlsx(election, file = "election_temp.xlsx", colNames = T)
 
 # check the levels of the constituency variable in each df
 levels(election$constituency) # 194 is Dorset Mid and Poole North
@@ -323,5 +323,5 @@ election_education <- election_education[order(election_education$constituency_r
 names(election_education)
 
 
-# write out the election_education file
-write.xlsx(election_education, file = "election_education_v3.xlsx", colNames = T) # cotswolds issues fixed
+# # write out the election_education file
+# write.xlsx(election_education, file = "election_education_v3.xlsx", colNames = T) # cotswolds issues fixed
