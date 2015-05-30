@@ -217,6 +217,12 @@ pointsdf$coeff <- as.numeric(paste(pointsdf$std.coeff))
 pointsdf <- pointsdf[order(pointsdf$coeff),]
 pointsdf2 <- pointsdf[-c(4),]
 
+mean(tidy$acem_avg)
+summary(tidy$acem_avg)
+sd(tidy$acem_avg)
+sd(tidy$share) * 0.09
+sd(tidy$noquals)
+sd(tidy$percem)
 View(pointsdf2)
 
 # plot
@@ -225,12 +231,18 @@ View(pointsdf2)
 g1 <- ggplot(pointsdf2, aes(x = vars, y = coeff)) +
     geom_point(aes(size=4)) + 
     geom_hline(yintercept = 0.0, colour = gray(1/2), lty = 2) +
+    geom_hline(yintercept = 0.2, colour = "grey90", lty = 1) +
+    geom_hline(yintercept = 0.4, colour = "grey90", lty = 1) +
+    geom_hline(yintercept = 0.6, colour = "grey90", lty = 1) +
+    geom_hline(yintercept = -0.2, colour = "grey90", lty = 1) +
+    geom_hline(yintercept = -0.4, colour = "grey90", lty = 1) +
+    geom_hline(yintercept = -0.6, colour = "grey90", lty = 1) +
     geom_errorbar(aes(ymin=lb,ymax=ub),width=0.1) +
     theme_classic() +
     coord_flip() +
     theme(legend.position="none") +
     scale_x_discrete("Constituency characteristics") + 
-    scale_y_continuous("Standardised effect size on UKIP vote share", limits = c(-0.6, 0.6))
+    scale_y_continuous("Standardised effect on UKIP vote share", limits = c(-0.6, 0.6), breaks = c(-0.6, -0.4,-0.2, 0, 0.2, 0.4, 0.6))
 g1
 
 
@@ -238,4 +250,4 @@ g1
 
 names(tidy)
 map <- tidy[, c(1, 6, 11, 15, 22, 30, 31, 32)]
-write.xlsx(map, file = "UKIP_map_data.xlsx", colNames = TRUE)
+# write.xlsx(map, file = "UKIP_map_data.xlsx", colNames = TRUE)
