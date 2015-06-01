@@ -122,7 +122,7 @@ summary(m7 <- lm(share ~ acem_avg + noquals + unemployed_pc_all + percem + depme
 
 # install.packages("robust")
 library(robust)
-help(lmRob)
+# help(lmRob)
 summary(r3 <- lmRob(share ~ acem_avg + noquals + unemployed_pc_all + percem + depmean,  data = tidyn))
 
 # Calculate Relative Importance for Each Predictor
@@ -132,13 +132,13 @@ calc.relimp(m7, type = c("lmg","last","first","pratt"),
 plot(calc.relimp(m7, sort=TRUE))
 
 # Bootstrap Measures of Relative Importance (1000 samples) 
-boot <- boot.relimp(m7, b = 1000, type = c("lmg", 
+# boot <- boot.relimp(m7, b = 1000, type = c("lmg", 
                                             "last", "first", "pratt"), rank = TRUE, 
                     diff = TRUE, rela = TRUE)
-booteval.relimp(boot) # print result
-plot(booteval.relimp(boot,sort=TRUE)) # plot result
+# booteval.relimp(boot) # print result
+# plot(booteval.relimp(boot,sort=TRUE)) # plot result
 
-help(calc.relimp)
+# help(calc.relimp)
 
 
 # check the diagnostics of the model --------------------------------------
@@ -200,8 +200,41 @@ summary(m7.2.beta) #now that I've standardized the outcome variable too, I get t
 
 summary(r4 <- lmRob(share ~ acem_avg + noquals + unemployed_pc_all + percem + depmean + Mean.age,  data = tidyn))
 
-std.coeff <- r4$coefficients
-se <- sqrt(diag(r4$cov))
+
+# fix under-scaled variables ----------------------------------------------
+
+# two variables haven't been multiplied by 100 i.e. %noquals is 0.54 rather than 54.0
+
+histogram(tidy$noquals)
+histogram(tidy$unemployed_pc_all)
+
+# go back and multiply these in the original tidy df
+tidy$noquals100 <- tidy$noquals * 100 # these vars were 100 times too small
+tidy$unemp100 <- tidy$unemployed_pc_all * 100 # these vars were 100 times too small
+
+
+
+summary(tidyn$noquals)
+summary(tidyn$noquals100)
+sd(tidyn$noquals100)
+summary(tidyn$acem_avg)
+sd(tidyn$acem_avg)
+
+# standardise the variables again
+rm(tidyn)
+library(dplyr)
+names(tidy)
+tidyn <- tidy %>% mutate_each_(funs(scale),vars=c("share", "acem_avg","noquals100", "unemp100", "percem", "percwb", "depmean", "Mean.age")) 
+colMeans(tidyn$depmean)
+colMeans(tidyn$unemp100)
+colMeans(tidyn$noquals100)
+colMeans(tidyn$share)
+
+library(robust)
+summary(r5 <- lmRob(share ~ acem_avg + noquals100 + unemp100 + percem + depmean + Mean.age,  data = tidyn))
+
+std.coeff <- r5$coefficients
+se <- sqrt(diag(r5$cov))
 se
 
 vars <- c("intercept", "mean 5A*-CEM", "percent no qualifications", "percent unemployed (aged 16+)", "percent non-White British", "mean deprivation", "mean age")
@@ -221,9 +254,14 @@ mean(tidy$acem_avg)
 summary(tidy$acem_avg)
 sd(tidy$acem_avg)
 sd(tidy$share) * 0.09
-sd(tidy$noquals)
+sd(tidy$depmean)
+sd(tidy$share) * -0.26
 sd(tidy$percem)
-View(pointsdf2)
+sd(tidy$share) * -0.48
+sd(tidy$noquals100)
+sd(tidy$share) * 0.47
+
+# View(pointsdf2)
 
 # plot
 
